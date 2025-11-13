@@ -2,17 +2,29 @@ package com.example.try_snap_bi.controller;
 
 import com.example.try_snap_bi.service.impl.SnapServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/snap")
 public class SnapController {
 
-    private final String privateKey = "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";
+    @Value("${config.private-key}")
+    private String privateKey;
 
     @Autowired
     private SnapServiceImpl snapService;
+
+    @GetMapping
+    public ResponseEntity<String> test(){
+        return ResponseEntity.ok("test");
+    }
 
     @PostMapping("/generate-token")
     public ResponseEntity<String> generateToken(@RequestHeader(value = "Client-Key", required = true) String clientKey){
@@ -20,8 +32,19 @@ public class SnapController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping
-    public ResponseEntity<String> test(){
-        return ResponseEntity.ok("test");
+    @GetMapping("/generate-time")
+    public ResponseEntity<String> generateTime(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        String timestamp = ZonedDateTime.now(ZoneOffset.of("+07:00")).format(formatter);
+
+        return ResponseEntity.ok(timestamp);
     }
+
+    @PostMapping("/generate-signature")
+    public ResponseEntity<String> generateSignature(@RequestHeader(value = "Iso-Time", required = true) String isoTime,
+                                                    @RequestHeader(value = "Client-Id", required = true) String clientId){
+        String response = snapService.generateSignature(privateKey, isoTime, clientId);
+        return ResponseEntity.ok(response);
+    }
+
 }

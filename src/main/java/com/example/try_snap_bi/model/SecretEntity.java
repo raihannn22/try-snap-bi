@@ -21,6 +21,6 @@ public class SecretEntity {
     @Column (name = "client_key")
     private String clientKey;
 
-    @Column (name = "public_key",length = 500)
+    @Column (name = "public_key",length = 10000)
     private String publicKey;
 }
