@@ -32,7 +32,7 @@ public class SnapController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/generate-time")
+    @PostMapping("/generate-time")
     public ResponseEntity<String> generateTime(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         String timestamp = ZonedDateTime.now(ZoneOffset.of("+07:00")).format(formatter);
@@ -41,8 +41,8 @@ public class SnapController {
     }
 
     @PostMapping("/generate-signature")
-    public ResponseEntity<String> generateSignature(@RequestHeader(value = "Iso-Time", required = true) String isoTime,
-                                                    @RequestHeader(value = "Client-Id", required = true) String clientId){
+    public ResponseEntity<String> generateSignature(@RequestHeader(value = "Timestamp", required = true) String isoTime,
+                                                    @RequestHeader(value = "Client-Key", required = true) String clientId){
         String response = snapService.generateSignature(privateKey, isoTime, clientId);
         return ResponseEntity.ok(response);
     }
