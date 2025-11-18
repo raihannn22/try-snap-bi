@@ -1,5 +1,6 @@
 package com.example.try_snap_bi.controller;
 
+import com.example.try_snap_bi.dto.ResponseDto;
 import com.example.try_snap_bi.service.impl.SnapServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,15 +22,9 @@ public class SnapController {
     @Autowired
     private SnapServiceImpl snapService;
 
-    @GetMapping
+    @GetMapping("/test")
     public ResponseEntity<String> test(){
         return ResponseEntity.ok("test");
-    }
-
-    @PostMapping("/generate-token")
-    public ResponseEntity<String> generateToken(@RequestHeader(value = "Client-Key", required = true) String clientKey){
-        String response = snapService.generateToken(privateKey, clientKey);
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/generate-time")
@@ -47,4 +42,14 @@ public class SnapController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/generate-token")
+    public ResponseEntity<?> generateToken(@RequestHeader(value = "Client-Key", required = true) String clientKey,
+                                                @RequestBody(required = false) ResponseDto requestBody){
+        String response = snapService.generateToken(privateKey, clientKey);
+        System.out.println(requestBody + " <-- requestBody");
+        if (requestBody != null){
+            return ResponseEntity.ok(requestBody);
+        }
+        return ResponseEntity.ok(response);
+    }
 }
