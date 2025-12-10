@@ -1,5 +1,6 @@
 package com.example.try_snap_bi.controller;
 
+import com.example.try_snap_bi.dto.AccessToken;
 import com.example.try_snap_bi.dto.ResponseDto;
 import com.example.try_snap_bi.service.impl.SnapServiceImpl;
 import org.apache.coyote.Response;
@@ -19,6 +20,9 @@ public class SnapController {
 
     @Value("${config.private-key}")
     private String privateKey;
+
+    @Value("${jwt.private-key}")
+    private String privateKey2;
 
     @Autowired
     private SnapServiceImpl snapService;
@@ -71,6 +75,22 @@ public class SnapController {
     public ResponseEntity<?> generateToken(@RequestHeader(value = "Client-Key", required = true) String clientKey,
                                                 @RequestBody(required = false) ResponseDto requestBody){
         String response = snapService.generateToken(privateKey, clientKey);
+        System.out.println(requestBody + " <-- requestBody");
+        if(requestBody == null) {
+            return ResponseEntity.ok(response);
+        }
+
+        if (requestBody.getResponseCode() == null && requestBody.getResponseMessage() == null) {
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.ok(requestBody);
+    }
+
+    @PostMapping("/generate-token-2")
+    public ResponseEntity<?> generateToken2(@RequestHeader(value = "X-Client-Key", required = true) String clientKey,
+                                           @RequestBody(required = false) ResponseDto requestBody){
+        AccessToken response = snapService.generateToken2(privateKey2, clientKey);
         System.out.println(requestBody + " <-- requestBody");
         if(requestBody == null) {
             return ResponseEntity.ok(response);

@@ -1,5 +1,6 @@
 package com.example.try_snap_bi.service.impl;
 
+import com.example.try_snap_bi.dto.AccessToken;
 import com.example.try_snap_bi.service.SnapService;
 import com.example.try_snap_bi.util.JwtUtil;
 import com.google.gson.Gson;
@@ -30,6 +31,24 @@ public class SnapServiceImpl implements SnapService {
         catch (Exception e){
             e.printStackTrace();
             return "gagall";
+        }
+    }
+
+    public AccessToken generateToken2(String privateKey, String clientKey){
+        AccessToken accessToken = new AccessToken();
+        try{
+            int expireIn = 3600;
+            long expireTime = new Date().getTime() + (expireIn * 1000);
+            JwtUtil jwtUtil = new JwtUtil(privateKey);
+            String token = jwtUtil.createTokenJWT(clientKey, "BCA", "token API", expireTime);
+
+            accessToken.setAccessToken(token);
+            return  accessToken;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            accessToken.setAccessToken("gagall");
+            return accessToken;
         }
     }
 
